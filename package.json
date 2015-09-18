@@ -1,0 +1,22 @@
+{
+  "name": "prochains-trains-ratp",
+  "version": "1.0.0",
+  "description": "A modern API to get information from the RATP",
+  "main": "bootstrap.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Léo Lam",
+  "license": "AGPLv3",
+  "dependencies": {
+    "babel": "^5.8.23",
+    "body-parser": "^1.14.0",
+    "bunyan": "^1.5.1",
+    "co": "^4.6.0",
+    "cors": "^2.7.1",
+    "express": "^4.13.3",
+    "lodash": "^3.10.1",
+    "needle": "^0.10.0",
+    "sqlite3": "^3.1.0"
+  }
+}
