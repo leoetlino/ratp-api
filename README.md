@@ -51,7 +51,7 @@ publicly. It even goes as far as threatening developers with legal action…
 This is for data that is supposed to be public, and
 that is already available to the public. **Why?**
 
-Given that web scrapping is forbidden, ratp-api does not rely on the website,
+Given that web scraping is forbidden, ratp-api does not rely on the website,
 but instead directly uses the API that powers the Android app.
 No reverse engineering was performed on the APK file.
 Only traffic sniffing was done on my own device and my own network.
