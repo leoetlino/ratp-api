@@ -117,12 +117,16 @@ let ratp = {
           if (stop.waitingTimeRaw === "Train a quai") {
             message = "À quai";
           }
+          if (stop.waitingTimeRaw === "Train retarde") {
+            message += " (R)";
+          }
           return {
             destination: stop.destinationName,
             waitingTime: stop.waitingTime,
             nextStopTime: stop.nextStopTime,
             rawMessage: stop.waitingTimeRaw,
             message,
+            delayed: stop.waitingTimeRaw === "Train retarde",
           };
         });
       return stops;
