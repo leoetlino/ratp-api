@@ -83,7 +83,8 @@ let ratp = {
       let now = new Date().getTime();
       response.nextStopsOnLines[0].nextStops
         .forEach((stop) => {
-          if (stop.waitingTimeRaw === "Service termine") {
+          if (stop.waitingTimeRaw === "Service termine"
+            || stop.waitingTimeRaw === "Train arrete") {
             return;
           }
           if (stop.waitingTime < -60) {
@@ -98,7 +99,9 @@ let ratp = {
           }
         });
       let stops = response.nextStopsOnLines[0].nextStops
-        .filter((stop) => stop.bStopInStation && stop.nextStopTime)
+        .filter((stop) => stop.bStopInStation && stop.nextStopTime
+          && stop.waitingTimeRaw !== "Service termine"
+          && stop.waitingTimeRaw !== "Train arrete")
         .map((stop) => {
           let stopTime = new Date(stop.nextStopTime).getTime();
           let minutesUntilStop = Math.ceil((stopTime - now) / 1000 / 60);
