@@ -88,13 +88,13 @@ let ratp = {
             return;
           }
           if (stop.waitingTime < -60) {
-            moduleLogger.debug(stop);
+            moduleLogger.debug({ stop }, "Bogus data from the RATP API: waitingTime < -60");
             return Promise.reject(new Error("The RATP API returned bogus data: waitingTime < -60"));
           }
           let stopTime = new Date(stop.nextStopTime).getTime();
           let minutesUntilStop = Math.ceil((stopTime - now) / 1000 / 60);
           if (minutesUntilStop < -1 || minutesUntilStop > 120) {
-            moduleLogger.debug(stop);
+            moduleLogger.debug({ stop }, "Bogus data from the RATP API: impossible nextStopTime");
             return Promise.reject(new Error("The RATP API returned bogus data: impossible nextStopTime"));
           }
         });
