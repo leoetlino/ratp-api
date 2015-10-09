@@ -8,7 +8,7 @@ let needle = require("needle");
 let moduleLogger = log.child({ component: "ratp/api" });
 
 const ONE_SECOND = 1000;
-const TTL = 15 * ONE_SECOND;
+const TTL = 5 * ONE_SECOND;
 let cache = {};
 
 let ratpApi = {
