@@ -24,7 +24,7 @@ let reqSerializer = (req) => {
 };
 
 let logger = bunyan.createLogger({
-  name: "prochains-trains-ratp",
+  name: "ratp-api",
   streams: streams,
   serializers: {
     req: reqSerializer,
