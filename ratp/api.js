@@ -47,11 +47,9 @@ let ratpApi = {
       `&withText=true&apixFormat=json`;
     let logger = moduleLogger.child({ url });
     if (cache[url] && new Date().getTime() < cache[url].validUntil.getTime()) {
-      logger.debug("Returning promise from cache");
       return cache[url].promise;
     }
     if (cache[url] && new Date().getTime() > cache[url].validUntil.getTime()) {
-      logger.debug("Removing cache entry which expired");
       delete cache[url];
     }
     return co(function* () {
