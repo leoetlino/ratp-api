@@ -17,6 +17,7 @@
     "express": "^4.13.3",
     "lodash": "^3.10.1",
     "needle": "^0.10.0",
+    "promisify-node": "^0.2.1",
     "sqlite3": "^3.1.0"
   }
 }

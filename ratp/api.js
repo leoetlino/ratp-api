@@ -2,8 +2,9 @@ const TOKEN = "FvChCBnSetVgTKk324rO";
 const API_HOST = "http://apixha.ixxi.net";
 
 let co = require("co");
+let promisify = require("promisify-node");
 let _ = require("lodash");
-let needle = require("needle");
+let needle = promisify(require("needle"));
 
 let moduleLogger = log.child({ component: "ratp/api" });
 
@@ -25,36 +26,37 @@ let ratpApi = {
       logger.debug("Removing cache entry which expired");
       delete cache[url];
     }
-    return new Promise((resolve, reject) => {
-      needle.get(url, (error, response) => {
-        if (error) {
-          logger.error(error, "Failed to query the RATP API");
-          return reject(error);
-        }
+    return co(function* () {
+      try {
+        let response = yield needle.get(url);
         logger = logger.child({ response: response.body });
         let data;
         try {
           data = JSON.parse(response.body);
-        } catch (err) {
-          err.message = "Failed to parse response: " + err.message;
-          logger.error(err, "Failed to parse response");
-          return reject(err);
+        } catch (error) {
+          error.message = "Failed to parse response: " + error.message;
+          logger.error({ error, response }, "Failed to parse response");
+          return Promise.reject(error);
         }
         if (!data) {
           logger.error("No data returned from the RATP API");
-          return reject(new Error("No data returned from the RATP API."));
+          return Promise.reject(new Error("No data returned from the RATP API."));
         }
         if (data.errorMsg) {
           logger.error({ error: data.errorMsg }, "The RATP API returned an error");
-          return reject(new Error("The RATP API returned an error: " + data.errorMsg));
+          return Promise.reject(new Error("The RATP API returned an error: " + data.errorMsg));
         }
-        resolve(data);
+        let now = new Date();
         cache[url] = {
           promise: Promise.resolve(data),
-          date: new Date(),
-          validUntil: new Date(new Date().getTime() + TTL),
+          date: now,
+          validUntil: new Date(now.getTime() + TTL),
         };
-      });
+        return data;
+      } catch (error) {
+        logger.error(error, "Failed to query the RATP API");
+        return Promise.reject(error);
+      }
     });
   },
 
