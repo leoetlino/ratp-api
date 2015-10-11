@@ -11,9 +11,37 @@ let moduleLogger = log.child({ component: "ratp/api" });
 const ONE_SECOND = 1000;
 const TTL = 5 * ONE_SECOND;
 let cache = {};
+let addToCache = (url, response) => {
+  let now = new Date();
+  cache[url] = {
+    promise: Promise.resolve(response),
+    date: now,
+    validUntil: new Date(now.getTime() + TTL),
+  };
+};
+
+let validateNextStops = (nextStops) => {
+  let now = new Date();
+  nextStops.forEach((stop) => {
+    if (stop.waitingTimeRaw === "Service termine"
+      || stop.waitingTimeRaw === "Train arrete") {
+      return;
+    }
+    if (stop.waitingTime < -60) {
+      moduleLogger.debug({ stop }, "Bogus data from the RATP API: waitingTime < -60");
+      throw new Error("The RATP API returned bogus data: waitingTime < -60");
+    }
+    let stopTime = new Date(stop.nextStopTime).getTime();
+    let minutesUntilStop = Math.ceil((stopTime - now) / 1000 / 60);
+    if (minutesUntilStop < -1 || minutesUntilStop > 120) {
+      moduleLogger.debug({ stop }, "Bogus data from the RATP API: impossible nextStopTime");
+      throw new Error("The RATP API returned bogus data: impossible nextStopTime");
+    }
+  });
+};
 
 let ratpApi = {
-  query(details) {
+  query(details, validateFn = () => {}) {
     const url = `${API_HOST}/APIX?keyapp=${TOKEN}` +
       "&" + details +
       `&withText=true&apixFormat=json`;
@@ -46,12 +74,8 @@ let ratpApi = {
           logger.error({ error: data.errorMsg }, "The RATP API returned an error");
           return Promise.reject(new Error("The RATP API returned an error: " + data.errorMsg));
         }
-        let now = new Date();
-        cache[url] = {
-          promise: Promise.resolve(data),
-          date: now,
-          validUntil: new Date(now.getTime() + TTL),
-        };
+        validateFn(data);
+        addToCache(url, data);
         return data;
       } catch (error) {
         logger.error(error, "Failed to query the RATP API");
@@ -62,26 +86,10 @@ let ratpApi = {
 
   queryNextStops(stationId, lineId, directionId) {
     return co(function* () {
-      let response = yield ratpApi.query(`cmd=getNextStopsRealtime` +
-        `&stopArea=${stationId}&line=${lineId}&direction=${directionId}`);
       let now = new Date().getTime();
-      response.nextStopsOnLines[0].nextStops
-        .forEach((stop) => {
-          if (stop.waitingTimeRaw === "Service termine"
-            || stop.waitingTimeRaw === "Train arrete") {
-            return;
-          }
-          if (stop.waitingTime < -60) {
-            moduleLogger.debug({ stop }, "Bogus data from the RATP API: waitingTime < -60");
-            return Promise.reject(new Error("The RATP API returned bogus data: waitingTime < -60"));
-          }
-          let stopTime = new Date(stop.nextStopTime).getTime();
-          let minutesUntilStop = Math.ceil((stopTime - now) / 1000 / 60);
-          if (minutesUntilStop < -1 || minutesUntilStop > 120) {
-            moduleLogger.debug({ stop }, "Bogus data from the RATP API: impossible nextStopTime");
-            return Promise.reject(new Error("The RATP API returned bogus data: impossible nextStopTime"));
-          }
-        });
+      let response = yield ratpApi.query(`cmd=getNextStopsRealtime` +
+        `&stopArea=${stationId}&line=${lineId}&direction=${directionId}`,
+        data => validateNextStops(data.nextStopsOnLines[0].nextStops));
       let stops = response.nextStopsOnLines[0].nextStops
         .filter((stop) => stop.bStopInStation && stop.nextStopTime
           && stop.waitingTimeRaw !== "Service termine"
