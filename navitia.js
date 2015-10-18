@@ -74,6 +74,10 @@ let navitia = {
         if (data.message === "no token") {
           return Promise.reject(new Error("No valid token for the Navitia API."));
         }
+        if (response.statusCode === 400) {
+          logger.error({ error: data.message }, "The Navitia API returned an error (bad request)");
+          return Promise.reject(new Error(`The Navitia API returned an error (bad request): ${data.error.message}`));
+        }
         addToCache(url, data);
         return data;
       } catch (error) {
