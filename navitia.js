@@ -8,6 +8,7 @@ let moment = require("moment");
 let needle = promisify(require("needle"));
 let normaliseName = requireFromRoot("normalise-name");
 
+let Profiler = requireFromRoot("profiler");
 let moduleLogger = log.child({ component: "navitia" });
 
 const ONE_SECOND = 1000;
@@ -59,10 +60,12 @@ let navitia = {
       delete cache[url];
     }
     moduleLogger.debug({ url }, "Querying API");
+    let profiler = Profiler.start("Querying API", { url });
     return co(function* () {
       try {
         let response = yield needle.get(url, { username: TOKEN });
         logger = logger.child({ response: response.body });
+        profiler.end();
         let data = fixResponse(response.body);
         if (typeof data.error === "object" && data.error.message) {
           logger.error({ error: data.error.message, errorCode: data.error.id }, "The Navitia API returned an error");
@@ -75,6 +78,7 @@ let navitia = {
         return data;
       } catch (error) {
         logger.error(error, "Failed to query the Navitia API");
+        profiler.end();
         return Promise.reject(error);
       }
     });
