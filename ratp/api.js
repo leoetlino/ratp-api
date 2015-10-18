@@ -104,7 +104,8 @@ let ratpApi = {
             || message === "0 mins") {
             message = "< 1 min";
           }
-          if (stop.waitingTimeRaw === "Train a quai") {
+          if (stop.waitingTimeRaw === "Train a quai"
+            || stop.waitingTimeRaw === "A l'arret") {
             message = "À quai";
           }
           if (stop.waitingTimeRaw === "Train retarde") {
