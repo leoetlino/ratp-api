@@ -125,9 +125,12 @@ let navitia = {
 
   queryNextTheoreticalStops(stopAreaId, lineCode, directionName) {
     return co(function* () {
+      if (directionName) {
+        directionName = normaliseName(directionName);
+      }
       let nowString = moment().format("YYYY-MM-DDTHH:mm");
       let response = yield navitia.query(`/v1/coverage/fr-idf/stop_areas/${stopAreaId}/stop_schedules` +
-        `?max_date_times=4&duration=3600` +
+        `?depth=0&max_date_times=4&duration=3600` +
         `&filter=line.code=${lineCode}&from_datetime=${nowString}`);
       let nextStops = [];
       response.stopSchedules
@@ -143,8 +146,13 @@ let navitia = {
             if (!destination) {
               destination = stop.route.direction.stopArea.name;
             }
+
             let nextStopTime = moment(date.dateTime, "YYYYMMDDHHmmss").format();
             let vehicleJourney = (_.findWhere(date.links, { type: "vehicle_journey" }) || {}).value;
+
+            if (directionName && normaliseName(destination) !== directionName) {
+              return;
+            }
             nextStops.push({
               destination,
               nextStopTime,
@@ -152,10 +160,6 @@ let navitia = {
             });
           });
         });
-      if (directionName) {
-        directionName = normaliseName(directionName);
-        nextStops = nextStops.filter(stop => normaliseName(stop.destination) === directionName);
-      }
       return nextStops;
     });
   },
