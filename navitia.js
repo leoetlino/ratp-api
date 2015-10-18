@@ -158,7 +158,7 @@ let navitia = {
             let destination;
             let destinationLink = date.links.find(link => link.id.includes("destination:"));
             if (destinationLink) {
-              let destinationNote = response.notes.find(note => note.id === destinationLink.id);
+              var destinationNote = response.notes.find(note => note.id === destinationLink.id);
               destination = (destinationNote || {}).value;
             }
             if (!destination) {
@@ -168,7 +168,7 @@ let navitia = {
             let nextStopTime = moment(date.dateTime, "YYYYMMDDHHmmss").format();
             let vehicleJourney = (_.findWhere(date.links, { type: "vehicle_journey" }) || {}).value;
 
-            if (directionName && normaliseName(destination) !== directionName) {
+            if (!destinationNote && directionName && normaliseName(destination) !== directionName) {
               return;
             }
             nextStops.push({
