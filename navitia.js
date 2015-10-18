@@ -95,17 +95,18 @@ let navitia = {
 
   getStopsOnLine(lineCode, directionName) {
     return co(function* () {
-      let routes = yield navitia.getRoutesForLine(lineCode);
-      let routeId = routes[0].id;
+      let response = yield navitia.query(`/v1/coverage/fr-idf/routes?filter=line.code=${lineCode}&depth=3`);
+      let routes = response.routes;
+      let stopPoints = routes[0].stopPoints;
       if (directionName) {
         directionName = normaliseName(directionName);
         let route = routes.find(r => normaliseName(r.direction.stopArea.name) === directionName);
         if (!route) {
           return Promise.reject(new Error(`Could not find route with direction “${directionName}”`));
         }
-        routeId = route.id;
+        stopPoints = route.stopPoints;
       }
-      return yield navitia.getStopsOnRoute(routeId);
+      return stopPoints;
     });
   },
 
