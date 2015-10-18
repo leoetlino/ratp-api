@@ -88,16 +88,8 @@ let navitia = {
 
   getRoutesForLine(lineCode) {
     return co(function* () {
-      let response = yield navitia.query(`/v1/coverage/fr-idf/lines?filter=line.code=${lineCode}`);
-      return response.lines[0].routes;
-    });
-  },
-
-  getStopsOnRoute(routeId) {
-    return co(function* () {
-      let response = yield navitia.query(`/v1/coverage/fr-idf/routes/${routeId}/route_schedules/?max_date_times=1&count=1000`);
-      return response.routeSchedules[0].table.rows
-        .map(row => row.stopPoint);
+      let response = yield navitia.query(`/v1/coverage/fr-idf/routes?filter=line.code=${lineCode}`);
+      return response.routes;
     });
   },
 
