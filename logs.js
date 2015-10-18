@@ -9,7 +9,7 @@
 
 let bunyan = require("bunyan");
 let streams = [{
-  level: "debug",
+  level: "trace",
   stream: process.stdout,
 }];
 let externalSystem;
