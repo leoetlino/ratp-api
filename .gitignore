@@ -1,3 +1,5 @@
 node_modules
 *~
 ratp.db
+config/*
+!config/default.yaml

@@ -17,6 +17,7 @@
  */
 
 global.log = require("./logs");
+global.config = require("config");
 global.appRoot = __dirname;
 global.requireFromRoot = (path) => {
   return require(global.appRoot + "/" + path);

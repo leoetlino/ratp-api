@@ -105,7 +105,8 @@
     // Globals
     "globals": {
         "log": true,
-        "requireFromRoot": true
+        "requireFromRoot": true,
+        "config": true
     },
 
     // Extend the default recommended configuration

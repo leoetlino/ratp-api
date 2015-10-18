@@ -1,5 +1,8 @@
 let ratp = requireFromRoot("ratp/ratp");
+let navitia = requireFromRoot("navitia");
 let co = require("co");
+
+let simplifyStopResponse = ({ coord, id, name } = {}) => ({ coord, id, name });
 
 export default ({ app }) => {
   app.get("/api/stations", function (req, res, next) {
@@ -14,7 +17,21 @@ export default ({ app }) => {
       return next(new Error("line is required"));
     }
     return co(function * () {
-      let stations = yield ratp.getAllStationsOnLine(req.params.line);
+      let stations = yield navitia.getStopsOnLine(req.params.line);
+      // The response contains way too much information than needed.
+      stations = stations.map(simplifyStopResponse);
+      return res.json(stations);
+    }).catch(next);
+  });
+
+  app.get("/api/stations/line-:line/:direction", function (req, res, next) {
+    if (!req.params.line || !req.params.direction) {
+      return next(new Error("line and direction are required"));
+    }
+    return co(function * () {
+      let stations = yield navitia.getStopsOnLine(req.params.line, req.params.direction);
+      // The response contains way too much information than needed.
+      stations = stations.map(simplifyStopResponse);
       return res.json(stations);
     }).catch(next);
   });
