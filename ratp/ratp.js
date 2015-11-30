@@ -1,18 +1,8 @@
 let co = require("co");
-let _ = require("lodash");
 
 let ratpApi = requireFromRoot("ratp/api");
 let ratpDb = requireFromRoot("ratp/database");
-
-let normaliseName = (name) => {
-  return name.toString().toLowerCase()
-    .replace(/\s+/g, "_")
-    .replace(/\-/g, "_")
-    .replace(/[^\w\_]+/g, "-")
-    .replace(/\_\_+/g, "_")
-    .replace(/^_+/, "")
-    .replace(/_+$/, "");
-};
+let normaliseName = requireFromRoot("normalise-name");
 
 let ratp = {
   getLineId(lineCode) {
