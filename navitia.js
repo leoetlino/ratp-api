@@ -49,17 +49,30 @@ let fixResponse = (response) => {
   return fixedResponse;
 };
 
+let getAllLinesOnNetwork = (networkId, depth = 0) => co(function* () {
+  let response = yield navitia.query(`/v1/coverage/fr-idf/networks/network:${networkId}/lines` +
+    `?depth=${depth}&count=1000`);
+  return response.lines;
+});
+
+let getLineDetails = (networkId, lineCode, depth = 1) => co(function* () {
+  let response = yield navitia.query(`/v1/coverage/fr-idf/networks/network:${networkId}/lines` +
+    `?depth=${depth}&filter=line.code=${lineCode}`);
+  return response.lines[0];
+});
+
 let navitia = {
   query(path) {
     const url = `${API_HOST}${path}`;
     let logger = moduleLogger.child({ url });
+    logger.debug("Querying API");
     if (cache[url] && new Date().getTime() < cache[url].validUntil.getTime()) {
+      logger.trace("Returning cached results");
       return cache[url].promise;
     }
     if (cache[url] && new Date().getTime() > cache[url].validUntil.getTime()) {
       delete cache[url];
     }
-    moduleLogger.debug({ url }, "Querying API");
     let profiler = Profiler.start("Querying API", { url });
     return co(function* () {
       try {
@@ -88,33 +101,46 @@ let navitia = {
     });
   },
 
-  getAllLines() {
+  getAllLines(depth = 0) {
     return co(function* () {
-      return yield navitia.query("/v1/coverage/fr-idf/networks/network:RTP/lines");
+      let busLines = yield getAllLinesOnNetwork("RTP", depth);
+      let metroLines = yield getAllLinesOnNetwork("OIF:439", depth);
+      let tramwayLines = yield getAllLinesOnNetwork("OIF:440", depth);
+      let rerLines = yield getAllLinesOnNetwork("RER", depth);
+      return [].concat(busLines, metroLines, tramwayLines, rerLines);
     });
+  },
+
+  getLineDetails(lineCode, depth = 1) {
+    return getLineDetails("RTP", lineCode, depth)
+      .then(null, () => getLineDetails("OIF:439", lineCode, depth))
+      .then(null, () => getLineDetails("OIF:440", lineCode, depth))
+      .then(null, () => getLineDetails("RER", lineCode, depth));
   },
 
   getRoutesForLine(lineCode) {
     return co(function* () {
-      let response = yield navitia.query(`/v1/coverage/fr-idf/routes?filter=line.code=${lineCode}`);
+      let response = yield navitia.getLineDetails(lineCode);
       return response.routes;
     });
   },
 
   getStopsOnLine(lineCode, directionName) {
     return co(function* () {
-      let response = yield navitia.query(`/v1/coverage/fr-idf/routes?filter=line.code=${lineCode}&depth=3`);
-      let routes = response.routes;
-      let stopPoints = routes[0].stopPoints;
-      if (directionName) {
-        directionName = normaliseName(directionName);
-        let route = routes.find(r => normaliseName(r.direction.stopArea.name) === directionName);
-        if (!route) {
-          return Promise.reject(new Error(`Could not find route with direction “${directionName}”`));
-        }
-        stopPoints = route.stopPoints;
+      let routes = yield navitia.getRoutesForLine(lineCode);
+      directionName = normaliseName(directionName);
+      let route = routes.find(r => normaliseName(r.direction.stopArea.name) === directionName);
+      // Special case for saint-lazare which got renamed to gare-st-lazare
+      // Yes, it is not ideal to hard code it.
+      // TODO: Maybe implement these name change fixes by using a synonym list?
+      if (!route && directionName === "saint_lazare") {
+        route = routes.find(r => normaliseName(r.direction.stopArea.name) === "gare_st_lazare");
       }
-      return stopPoints;
+      if (!route) {
+        return Promise.reject(new Error(`Could not find route with direction “${directionName}”`));
+      }
+      let response = yield navitia.query(`/v1/coverage/fr-idf/routes/${route.id}?depth=3`);
+      return response.routes[0].stopPoints;
     });
   },
 

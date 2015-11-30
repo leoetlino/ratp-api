@@ -17,10 +17,7 @@ export default ({ app }) => {
       return next(new Error("line is required"));
     }
     return co(function * () {
-      let stations = yield navitia.getStopsOnLine(req.params.line);
-      // The response contains way too much information than needed.
-      stations = stations.map(simplifyStopResponse);
-      return res.json(stations);
+      res.json(yield ratp.getAllStationsOnLine(req.params.line));
     }).catch(next);
   });
 
