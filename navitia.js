@@ -88,19 +88,9 @@ let navitia = {
     });
   },
 
-  getAllLines(depth = 0) {
+  getAllLines() {
     return co(function* () {
-      let response = yield navitia.query("/v1/coverage/fr-idf/networks/network:RTP/lines" +
-        `?depth=${depth}&count=1000`);
-      return response.lines;
-    });
-  },
-
-  getLineDetails(lineCode, depth = 1) {
-    return co(function* () {
-      let response = yield navitia.query("/v1/coverage/fr-idf/networks/network:RTP/lines" +
-        `?depth=${depth}&filter=line.code=${lineCode}`);
-      return response.lines[0];
+      return yield navitia.query("/v1/coverage/fr-idf/networks/network:RTP/lines");
     });
   },
 
