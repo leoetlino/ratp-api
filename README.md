@@ -28,6 +28,9 @@ You can do this with `adb` and root access:
 adb pull /data/data/com.fabernovel.ratp/databases/ratp.db ./
 ```
 
+Alternatively, you can extract the database file from the APK
+(which is just a special ZIP file).
+
 Finally, start the app:
 
 ```
