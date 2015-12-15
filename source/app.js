@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-global.log = require("./logs");
+global.log = require("./common/logs");
 global.config = require("config");
 global.appRoot = __dirname;
 global.requireFromRoot = (path) => {

@@ -41,7 +41,7 @@ for (let handler of handlers) {
   if (handler.includes(".")) {
     moduleLogger.info("Loading file: " + handler);
     try {
-      require(global.appRoot + "/route-handlers/" + handler)(args);
+      requireFromRoot(`route-handlers/${handler}`)(args);
     } catch (error) {
       moduleLogger.fatal(error, `Failed to load ${handler}.`);
       process.exit(1);

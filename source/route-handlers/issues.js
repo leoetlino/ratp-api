@@ -1,4 +1,4 @@
-import BadRequestError from "~/errors/BadRequestError";
+import BadRequestError from "~/common/errors/BadRequestError";
 
 let ratp = requireFromRoot("ratp/ratp");
 

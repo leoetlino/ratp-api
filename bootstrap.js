@@ -19,7 +19,7 @@
 require("babel-polyfill");
 require("babel-register");
 if (!process.env.REPL) {
-  require("./app");
+  require("./source/app");
 } else {
-  require("./repl");
+  require("./source/repl");
 }

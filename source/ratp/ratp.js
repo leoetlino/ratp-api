@@ -1,6 +1,6 @@
 let ratpApi = requireFromRoot("ratp/api");
 let ratpDb = requireFromRoot("ratp/database");
-let normaliseName = requireFromRoot("normalise-name");
+let normaliseName = requireFromRoot("common/normalise-name");
 
 let ratp = {
   getLineId(lineCode) {

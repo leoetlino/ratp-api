@@ -1,7 +1,7 @@
-import BadRequestError from "~/errors/BadRequestError";
+import BadRequestError from "~/common/errors/BadRequestError";
 
 let ratp = requireFromRoot("ratp/ratp");
-let navitia = requireFromRoot("navitia");
+let navitia = requireFromRoot("navitia/navitia");
 
 export default ({ app, wrap }) => {
   app.get("/api/directions/line-:line", wrap(async function (req, res) {

@@ -1,11 +1,11 @@
-import DatabaseNoResultError from "~/errors/DatabaseNoResultError";
+import DatabaseNoResultError from "~/common/errors/DatabaseNoResultError";
 
 let sqlite3 = require("sqlite3");
-let database = new sqlite3.Database(global.appRoot + "/ratp.db", sqlite3.OPEN_READONLY, (err) => {
+let database = new sqlite3.Database(global.appRoot + "/../ratp.db", sqlite3.OPEN_READONLY, (err) => {
   if (!err) {
     return;
   }
-  throw new Error(`Failed to open the database (is it at ${global.appRoot}/ratp.db?)`);
+  throw new Error(`Failed to open the database (is it at ${global.appRoot}/../ratp.db?)`);
 });
 
 let moduleLogger = log.child({ component: "ratp/db" });

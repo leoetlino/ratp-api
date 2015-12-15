@@ -5,9 +5,9 @@ let promisify = require("promisify-node");
 let _ = require("lodash");
 let moment = require("moment");
 let needle = promisify(require("needle"));
-let normaliseName = requireFromRoot("normalise-name");
+let normaliseName = requireFromRoot("common/normalise-name");
 
-let Profiler = requireFromRoot("profiler");
+let Profiler = requireFromRoot("common/profiler");
 let moduleLogger = log.child({ component: "navitia" });
 
 const ONE_SECOND = 1000;

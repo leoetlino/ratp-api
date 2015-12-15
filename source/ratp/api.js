@@ -1,8 +1,8 @@
 const TOKEN = "FvChCBnSetVgTKk324rO";
 const API_HOST = "http://apixha.ixxi.net";
 
-import RatpApiError from "~/errors/RatpApiError";
-import BogusRatpApiResponseError from "~/errors/BogusRatpApiResponseError";
+import RatpApiError from "~/common/errors/RatpApiError";
+import BogusRatpApiResponseError from "~/common/errors/BogusRatpApiResponseError";
 
 let promisify = require("promisify-node");
 let _ = require("lodash");

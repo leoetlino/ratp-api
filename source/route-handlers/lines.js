@@ -1,5 +1,5 @@
 let ratp = requireFromRoot("ratp/ratp");
-let navitia = requireFromRoot("navitia");
+let navitia = requireFromRoot("navitia/navitia");
 
 export default ({ app, wrap }) => {
   app.get("/api/lines", wrap(async function (req, res) {
