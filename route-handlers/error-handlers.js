@@ -1,8 +1,6 @@
 export default ({app}) => {
   app.use(function notFoundHandler(req, res) {
-    res.status(404);
-    return res.json({
-      result: "error",
+    return res.status(404).json({
       error: "Not found",
     });
   });
@@ -14,8 +12,8 @@ export default ({app}) => {
         error: err.message,
       });
     }
-    return res.status(500).json({
-      error: err.message,
+    return res.status(err.statusCode || 500).json({
+      error: err.message || "Unknown error",
     });
   });
 };

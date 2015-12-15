@@ -1,6 +1,9 @@
 const TOKEN = "FvChCBnSetVgTKk324rO";
 const API_HOST = "http://apixha.ixxi.net";
 
+import RatpApiError from "~/errors/RatpApiError";
+import BogusRatpApiResponseError from "~/errors/BogusRatpApiResponseError";
+
 let promisify = require("promisify-node");
 let _ = require("lodash");
 let needle = promisify(require("needle"));
@@ -28,13 +31,13 @@ let validateNextStops = (nextStops) => {
     }
     if (stop.waitingTime < -60) {
       moduleLogger.debug({ stop }, "Bogus data from the RATP API: waitingTime < -60");
-      throw new Error("The RATP API returned bogus data: waitingTime < -60");
+      throw new BogusRatpApiResponseError("waitingTime < -60");
     }
     let stopTime = new Date(stop.nextStopTime).getTime();
     let minutesUntilStop = Math.ceil((stopTime - now) / 1000 / 60);
     if (minutesUntilStop < -1 || minutesUntilStop > 120) {
       moduleLogger.debug({ stop }, "Bogus data from the RATP API: impossible nextStopTime");
-      throw new Error("The RATP API returned bogus data: impossible nextStopTime");
+      throw new BogusRatpApiResponseError("impossible nextStopTime");
     }
   });
 };
@@ -64,11 +67,11 @@ let ratpApi = {
       }
       if (!data) {
         logger.error("No data returned from the RATP API");
-        return Promise.reject(new Error("No data returned from the RATP API."));
+        return Promise.reject(new BogusRatpApiResponseError("no data returned"));
       }
       if (data.errorMsg) {
         logger.error({ error: data.errorMsg }, "The RATP API returned an error");
-        return Promise.reject(new Error("The RATP API returned an error: " + data.errorMsg));
+        return Promise.reject(new RatpApiError(data.errorMsg));
       }
       validateFn(data);
       addToCache(url, data);

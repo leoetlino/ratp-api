@@ -1,3 +1,5 @@
+import BadRequestError from "~/errors/BadRequestError";
+
 let ratp = requireFromRoot("ratp/ratp");
 
 export default ({ app, wrap }) => {
@@ -13,7 +15,7 @@ export default ({ app, wrap }) => {
 
   app.get("/api/issues/line-:line", wrap(async function (req, res) {
     if (!req.params.line) {
-      throw new Error("line is required");
+      throw new BadRequestError("line is required");
     }
     let issues = await ratp.getIssuesForLine(req.params.line);
     return res.json(issues);

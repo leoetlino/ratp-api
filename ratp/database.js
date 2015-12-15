@@ -1,3 +1,5 @@
+import DatabaseNoResultError from "~/errors/DatabaseNoResultError";
+
 let sqlite3 = require("sqlite3");
 let database = new sqlite3.Database(global.appRoot + "/ratp.db", sqlite3.OPEN_READONLY, (err) => {
   if (!err) {
@@ -23,11 +25,11 @@ let ratpDb = {
         }
         if (!row) {
           moduleLogger.warn({ query, parameters }, "No result in the database");
-          return reject(new Error("No result in the database"));
+          return reject(new DatabaseNoResultError());
         }
         if (!row[field]) {
           moduleLogger.warn({ query, field, parameters }, "No such field in the result row");
-          return reject(new Error("No result in the database: no such row field"));
+          return reject(new DatabaseNoResultError("no such row field"));
         }
         resolve(row[field]);
       });
@@ -47,7 +49,7 @@ let ratpDb = {
         }
         if (!row) {
           moduleLogger.warn({ query, parameters }, "No result in the database");
-          return reject(new Error("No result in the database"));
+          return reject(new DatabaseNoResultError());
         }
         resolve(row);
       });
@@ -67,7 +69,7 @@ let ratpDb = {
         }
         if (!rows.length) {
           moduleLogger.warn({ query, parameters }, "No result in the database");
-          return reject(new Error("No result in the database"));
+          return reject(new DatabaseNoResultError());
         }
         resolve(rows);
       });
