@@ -1,5 +1,3 @@
-let co = require("co");
-
 let ratpApi = requireFromRoot("ratp/api");
 let ratpDb = requireFromRoot("ratp/database");
 let normaliseName = requireFromRoot("normalise-name");
@@ -76,24 +74,22 @@ let ratp = {
     return ratpApi.queryIssues("networkType=groupoflines&network=1");
   },
 
-  getIssuesForLine(lineCode) {
-    return co(function* () {
-      let issues = yield ratp.getIssuesForMetro();
-      let relevantIssues = issues
-        .filter((issue) => {
-          let concernsLine = false;
-          if (!issue.lines) {
-            return false;
+  async getIssuesForLine(lineCode) {
+    let issues = await ratp.getIssuesForMetro();
+    let relevantIssues = issues
+      .filter((issue) => {
+        let concernsLine = false;
+        if (!issue.lines) {
+          return false;
+        }
+        issue.lines.forEach((line) => {
+          if (line.name === lineCode) {
+            concernsLine = true;
           }
-          issue.lines.forEach((line) => {
-            if (line.name === lineCode) {
-              concernsLine = true;
-            }
-          });
-          return concernsLine;
-        }) || [];
-      return relevantIssues;
-    });
+        });
+        return concernsLine;
+      }) || [];
+    return relevantIssues;
   },
 };
 

@@ -32,7 +32,10 @@ app.use(function (req, res, next) {
   next();
 });
 
-let args = { app };
+// Used in route handlers to catch async exceptions as if they were synchronous.
+let wrap = fn => (...args) => fn(...args).catch(args[2]);
+
+let args = { app, wrap };
 let handlers = _.without(fs.readdirSync(global.appRoot + "/route-handlers"), "error-handlers.js");
 for (let handler of handlers) {
   if (handler.includes(".")) {

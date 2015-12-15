@@ -1,25 +1,20 @@
 let ratp = requireFromRoot("ratp/ratp");
 let navitia = requireFromRoot("navitia");
-let co = require("co");
 
-export default ({ app }) => {
-  app.get("/api/directions/line-:line", function (req, res, next) {
+export default ({ app, wrap }) => {
+  app.get("/api/directions/line-:line", wrap(async function (req, res) {
     if (!req.params.line) {
-      return next(new Error("line is required"));
+      throw new Error("line is required");
     }
-    return co(function * () {
-      let directions = yield ratp.getDirectionsForLine(req.params.line);
-      return res.json(directions);
-    }).catch(next);
-  });
+    let directions = await ratp.getDirectionsForLine(req.params.line);
+    return res.json(directions);
+  }));
 
-  app.get("/api/routes/line-:line", function (req, res, next) {
+  app.get("/api/routes/line-:line", wrap(async function (req, res) {
     if (!req.params.line) {
-      return next(new Error("line is required"));
+      throw new Error("line is required");
     }
-    return co(function * () {
-      let routes = yield navitia.getRoutesForLine(req.params.line);
-      return res.json(routes);
-    }).catch(next);
-  });
+    let routes = await navitia.getRoutesForLine(req.params.line);
+    return res.json(routes);
+  }));
 };

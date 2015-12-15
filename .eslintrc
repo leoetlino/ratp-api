@@ -1,4 +1,6 @@
 {
+    "parser": "babel-eslint",
+
     // Rules:
     // 0 means disabled
     // 1 means to consider issues as warnings

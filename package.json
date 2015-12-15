@@ -16,7 +16,6 @@
     "babel-register": "^6.0.0",
     "body-parser": "^1.14.1",
     "bunyan": "^1.5.1",
-    "co": "^4.6.0",
     "config": "^1.17.1",
     "cors": "^2.7.1",
     "express": "^4.13.3",

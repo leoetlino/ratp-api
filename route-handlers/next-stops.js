@@ -1,29 +1,24 @@
 let ratp = requireFromRoot("ratp/ratp");
 let navitia = requireFromRoot("navitia");
-let co = require("co");
 
-export default ({ app }) => {
-  app.get("/api/next-stops/line-:line/:direction/:station", function (req, res, onError) {
+export default ({ app, wrap }) => {
+  app.get("/api/next-stops/line-:line/:direction/:station", wrap(async function (req, res) {
     if (!req.params.line || !req.params.direction || !req.params.station) {
-      return onError(new Error("line, direction and station are required"));
+      throw new Error("line, direction and station are required");
     }
-    return co(function * () {
-      let lineId = yield ratp.getLineId(req.params.line);
-      let stationId = yield ratp.getStationId(req.params.station);
-      let directionId = yield ratp.getDirectionIdForLine(req.params.direction, req.params.line);
-      let stops = yield ratp.getNextStops(stationId, lineId, directionId);
-      return res.json(stops);
-    }).catch(onError);
-  });
+    let lineId = await ratp.getLineId(req.params.line);
+    let stationId = await ratp.getStationId(req.params.station);
+    let directionId = await ratp.getDirectionIdForLine(req.params.direction, req.params.line);
+    let stops = await ratp.getNextStops(stationId, lineId, directionId);
+    return res.json(stops);
+  }));
 
-  app.get("/api/next-theoretical-stops/line-:line/:direction/:station", function (req, res, onError) {
+  app.get("/api/next-theoretical-stops/line-:line/:direction/:station", wrap(async function (req, res) {
     if (!req.params.line || !req.params.direction || !req.params.station) {
-      return onError(new Error("line, direction and station are required"));
+      throw new Error("line, direction and station are required");
     }
-    return co(function * () {
-      let stopAreaId = yield navitia.getStopAreaId(req.params.station, req.params.line, req.params.direction);
-      let stops = yield navitia.queryNextTheoreticalStops(stopAreaId, req.params.line, req.params.direction);
-      return res.json(stops);
-    }).catch(onError);
-  });
+    let stopAreaId = await navitia.getStopAreaId(req.params.station, req.params.line, req.params.direction);
+    let stops = await navitia.queryNextTheoreticalStops(stopAreaId, req.params.line, req.params.direction);
+    return res.json(stops);
+  }));
 };

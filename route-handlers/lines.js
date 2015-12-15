@@ -1,19 +1,14 @@
 let ratp = requireFromRoot("ratp/ratp");
 let navitia = requireFromRoot("navitia");
-let co = require("co");
 
-export default ({ app }) => {
-  app.get("/api/lines", function (req, res, next) {
-    return co(function * () {
-      let lines = yield ratp.getAllLines();
-      return res.json(lines);
-    }).catch(next);
-  });
+export default ({ app, wrap }) => {
+  app.get("/api/lines", wrap(async function (req, res) {
+    let lines = await ratp.getAllLines();
+    return res.json(lines);
+  }));
 
-  app.get("/api/lines/:line", function (req, res, next) {
-    return co(function * () {
-      let lineDetails = yield navitia.getLineDetails(req.params.line);
-      return res.json(lineDetails);
-    }).catch(next);
-  });
+  app.get("/api/lines/:line", wrap(async function (req, res) {
+    let lineDetails = await navitia.getLineDetails(req.params.line);
+    return res.json(lineDetails);
+  }));
 };

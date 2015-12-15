@@ -1,28 +1,21 @@
 let ratp = requireFromRoot("ratp/ratp");
-let co = require("co");
 
-export default ({ app }) => {
-  app.get(["/api/issues", "/api/issues/all"], function (req, res, next) {
-    return co(function * () {
-      let issues = yield ratp.getIssuesForAll();
-      return res.json(issues);
-    }).catch(next);
-  });
+export default ({ app, wrap }) => {
+  app.get(["/api/issues", "/api/issues/all"], wrap(async function (req, res) {
+    let issues = await ratp.getIssuesForAll();
+    return res.json(issues);
+  }));
 
-  app.get("/api/issues/metro", function (req, res, next) {
-    return co(function * () {
-      let issues = yield ratp.getIssuesForMetro();
-      return res.json(issues);
-    }).catch(next);
-  });
+  app.get("/api/issues/metro", wrap(async function (req, res) {
+    let issues = await ratp.getIssuesForMetro();
+    return res.json(issues);
+  }));
 
-  app.get("/api/issues/line-:line", function (req, res, next) {
+  app.get("/api/issues/line-:line", wrap(async function (req, res) {
     if (!req.params.line) {
-      return next(new Error("line is required"));
+      throw new Error("line is required");
     }
-    return co(function * () {
-      let issues = yield ratp.getIssuesForLine(req.params.line);
-      return res.json(issues);
-    }).catch(next);
-  });
+    let issues = await ratp.getIssuesForLine(req.params.line);
+    return res.json(issues);
+  }));
 };
