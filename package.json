@@ -1,13 +1,14 @@
 {
-  "name": "prochains-trains-ratp",
+  "name": "ratp-api",
   "version": "1.0.0",
+  "repository": "https://github.com/leoetlino/ratp-api",
   "description": "A modern API to get information from the RATP",
   "main": "bootstrap.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Léo Lam",
-  "license": "AGPLv3",
+  "license": "AGPL-3.0",
   "dependencies": {
     "babel-plugin-add-module-exports": "^0.1.1",
     "babel-polyfill": "^6.0.0",
