@@ -9,7 +9,11 @@
   "author": "Léo Lam",
   "license": "AGPLv3",
   "dependencies": {
-    "babel": "^5.8.23",
+    "babel-plugin-add-module-exports": "^0.1.1",
+    "babel-polyfill": "^6.0.0",
+    "babel-preset-es2015-mod": "^6.0.0",
+    "babel-preset-stage-2": "^6.0.0",
+    "babel-register": "^6.0.0",
     "body-parser": "^1.14.1",
     "bunyan": "^1.5.1",
     "co": "^4.6.0",

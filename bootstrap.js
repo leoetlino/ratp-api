@@ -16,7 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require("babel/register");
+require("babel-polyfill");
+require("babel-register");
 if (!process.env.REPL) {
   require("./app");
 } else {
