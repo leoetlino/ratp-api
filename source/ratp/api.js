@@ -78,6 +78,7 @@ let ratpApi = {
       return data;
     } catch (error) {
       logger.error(error, "Failed to query the RATP API");
+      error.statusCode = 503;
       return Promise.reject(error);
     }
   },

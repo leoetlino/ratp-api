@@ -80,7 +80,11 @@ let navitia = {
       let data = fixResponse(response.body);
       if (typeof data.error === "object" && data.error.message) {
         logger.error({ error: data.error.message, errorCode: data.error.id }, "The Navitia API returned an error");
-        return Promise.reject(new Error(`The Navitia API returned an error: ${data.error.message} (${data.error.id})`));
+        let error = new Error(`The Navitia API returned an error: ${data.error.message} (${data.error.id})`);
+        if (data.error.id === "bad_filter") {
+          error.statusCode = 404;
+        }
+        return Promise.reject(error);
       }
       if (data.message === "no token") {
         return Promise.reject(new Error("No valid token for the Navitia API."));
