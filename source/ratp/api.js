@@ -110,7 +110,7 @@ let ratpApi = {
           message = "À quai";
         }
         if (stop.waitingTimeRaw === "Train retarde") {
-          message += " (R)";
+          message += " +";
         }
         return {
           destination: stop.destinationName,
