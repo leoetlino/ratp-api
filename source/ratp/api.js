@@ -24,6 +24,17 @@ let addToCache = (url, response) => {
 
 let validateNextStops = (nextStops) => {
   let now = new Date();
+  if (!Array.isArray(nextStops)) {
+    let err = new BogusRatpApiResponseError("nextStops isn't an array?!?");
+    moduleLogger.warn({ nextStops }, err);
+    throw err;
+  }
+  // the API sometimes returns an empty array for some reason
+  if (!nextStops.length && now.getHours() > 6) {
+    let err = new BogusRatpApiResponseError("No trains but there should be");
+    moduleLogger.debug(err);
+    throw err;
+  }
   nextStops.forEach((stop) => {
     if (stop.waitingTimeRaw === "Service termine"
       || stop.waitingTimeRaw === "Train arrete") {
