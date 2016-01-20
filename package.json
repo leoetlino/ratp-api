@@ -5,7 +5,8 @@
   "description": "A modern API to get information from the RATP",
   "main": "bootstrap.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "install": "chmod +x ./lint.sh && ln -sf ../../lint.sh .git/hooks/pre-commit",
+    "lint": "eslint_d source/ || exit 0"
   },
   "author": "Léo Lam",
   "license": "AGPL-3.0",
@@ -27,5 +28,13 @@
     "needle": "^0.11.0",
     "promisify-node": "^0.3.0",
     "sqlite3": "^3.1.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^5.0.0-beta6",
+    "eslint": "^1.10.3",
+    "eslint-config-import": "^0.9.1",
+    "eslint-import-resolver-node": "^0.1.1",
+    "eslint-plugin-import": "^0.12.1",
+    "eslint_d": "^2.4.0"
   }
 }
