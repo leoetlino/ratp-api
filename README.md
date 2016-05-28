@@ -25,7 +25,7 @@ The database is not bundled to prevent legal issues.
 You can do this with `adb` and root access:
 
 ```
-adb pull /data/data/com.fabernovel.ratp/databases/ratp.db ./
+adb pull /data/data/com.fabernovel.ratp/databases/ratp.db ./source/
 ```
 
 Alternatively, you can extract the database file from the APK
