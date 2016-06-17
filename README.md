@@ -12,7 +12,7 @@ Clone the repo and then install the npm modules
 (as well as bunyan, used for logs):
 
 ```
-git clone git@github.com:leoetlino/ratp-api
+git clone https://github.com/leoetlino/ratp-api.git
 cd ratp-api
 sudo npm -g install bunyan
 npm install
