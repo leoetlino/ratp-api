@@ -106,7 +106,7 @@ let ratpApi = {
       .map((stop) => {
         let stopTime = new Date(stop.nextStopTime).getTime();
         let minutesUntilStop = Math.ceil((stopTime - now) / 1000 / 60);
-        let message = minutesUntilStop + " mins";
+        let message = minutesUntilStop + " min";
         if (message === "1 mins") {
           message = "1 min";
         }
