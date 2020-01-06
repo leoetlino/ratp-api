@@ -29,12 +29,6 @@ let validateNextStops = (nextStops) => {
     moduleLogger.warn({ nextStops }, err);
     throw err;
   }
-  // the API sometimes returns an empty array for some reason
-  if (!nextStops.length && now.getHours() > 6) {
-    let err = new BogusRatpApiResponseError("No trains but there should be");
-    moduleLogger.debug(err);
-    throw err;
-  }
   nextStops.forEach((stop) => {
     if (stop.waitingTime == null) {
       return;
