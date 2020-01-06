@@ -21,15 +21,9 @@ npm install
 Copy the sqlite3 database extracted from the RATP official Android app
 into the application root dir.
 The database is not bundled to prevent legal issues.
+**ratp-api requires the new (circa Jan 2020) database format.
 
-You can do this with `adb` and root access:
-
-```
-adb pull /data/data/com.fabernovel.ratp/databases/ratp.db ./source/
-```
-
-Alternatively, you can extract the database file from the APK
-(which is just a special ZIP file).
+As of Jan 2020, in newer versions of the app, the database can be found at assets/databases/jenkins_ref.151.db in the APK. This name is likely automatically generated and the number is probably a version number that will change in newer app versions.
 
 Finally, start the app:
 

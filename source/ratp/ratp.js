@@ -17,30 +17,30 @@ let ratp = {
 
   getStationId(stationName) {
     let normalisedName = normaliseName(stationName);
-    return ratpDb.getField("SELECT _id FROM stopplace WHERE normalized_name = ?", "_id", normalisedName);
+    return ratpDb.getField("SELECT _id FROM stoparea WHERE name_normalized = ?", "_id", normalisedName);
   },
 
   getStationName(stationId) {
-    return ratpDb.getField("SELECT name FROM stopplace WHERE _id = ?", "name", stationId);
+    return ratpDb.getField("SELECT name FROM stoparea WHERE _id = ?", "name", stationId);
   },
 
   getAllStations() {
-    return ratpDb.getRows("SELECT _id as id, name, normalized_name as normalisedName FROM stopplace");
+    return ratpDb.getRows("SELECT _id as id, name, name_normalized as normalisedName FROM stoparea");
   },
 
   getAllStationsOnLine(lineCode) {
     return ratpDb.getRows("SELECT " +
-      "stopplace._id as id, stopplace.name, stopplace.normalized_name as normalisedName " +
-      "FROM stopplace " +
-      "INNER JOIN stoppoint on stopplace._id = stoppoint.stoparea_id " +
-      "WHERE stoppoint.line_id = (SELECT _id FROM line WHERE line.code = ?) " +
+      "stoparea._id as id, stoparea.name, stoparea.name_normalized as normalisedName " +
+      "FROM stoparea " +
+      "INNER JOIN stoppoint_in_direction on stoparea._id = stoppoint_in_direction.stoparea_id " +
+      "WHERE stoppoint_in_direction.line_id = (SELECT _id FROM line WHERE line.code = ?) " +
       "ORDER BY y, x ASC",
       lineCode);
   },
 
   getDirectionId(directionName) {
     let normalisedName = normaliseName(directionName);
-    return ratpDb.getField("SELECT _id FROM direction WHERE normalized_name = ?", "_id", normalisedName);
+    return ratpDb.getField("SELECT _id FROM direction WHERE name_normalized = ?", "_id", normalisedName);
   },
 
   getDirectionName(directionId) {
@@ -50,14 +50,14 @@ let ratp = {
   getDirectionIdForLine(directionName, lineCode) {
     let normalisedName = normaliseName(directionName);
     return ratpDb.getField(
-      "SELECT _id FROM direction WHERE normalized_name = ? " +
+      "SELECT _id FROM direction WHERE name_normalized = ? " +
       "AND line_id = (SELECT _id FROM line WHERE line.code = ?)",
       "_id",
       normalisedName, lineCode);
   },
 
   getDirectionsForLine(lineCode) {
-    return ratpDb.getRows("SELECT _id as id, name, normalized_name as normalisedName FROM direction " +
+    return ratpDb.getRows("SELECT _id as id, name, name_normalized as normalisedName FROM direction " +
       "WHERE line_id = (SELECT _id FROM line WHERE line.code = ?)",
       lineCode);
   },
