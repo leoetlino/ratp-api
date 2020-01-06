@@ -36,6 +36,9 @@ let validateNextStops = (nextStops) => {
     throw err;
   }
   nextStops.forEach((stop) => {
+    if (stop.waitingTime == null) {
+      return;
+    }
     if (stop.waitingTimeRaw === "Service termine"
       || stop.waitingTimeRaw === "Train arrete") {
       return;
@@ -100,7 +103,7 @@ let ratpApi = {
       `&stopArea=${stationId}&line=${lineId}&direction=${directionId}`,
       data => validateNextStops(data.nextStopsOnLines[0].nextStops));
     let stops = response.nextStopsOnLines[0].nextStops
-      .filter((stop) => stop.bStopInStation && stop.nextStopTime
+      .filter((stop) => stop.bStopInStation && stop.waitingTime != null && stop.nextStopTime
         && stop.waitingTimeRaw !== "Service termine"
         && stop.waitingTimeRaw !== "Train arrete")
       .map((stop) => {
