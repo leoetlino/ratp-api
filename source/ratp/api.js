@@ -1,4 +1,4 @@
-const TOKEN = "FvChCBnSetVgTKk324rO";
+const TOKEN = "PfndhPqWEoI5ERvmlGiw9S3m";
 const API_HOST = "http://apixha.ixxi.net";
 
 import RatpApiError from "~/common/errors/RatpApiError";
